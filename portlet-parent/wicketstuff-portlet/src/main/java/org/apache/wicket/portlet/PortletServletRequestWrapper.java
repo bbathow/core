@@ -17,7 +17,9 @@
 package org.apache.wicket.portlet;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -80,6 +82,8 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper {
 	 * HTTP session.
 	 */
 	private HttpSession session;
+
+	private Map parameterMap;
 
 	/**
 	 * FIXME javadoc
@@ -153,12 +157,19 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper {
 			requestURI = (String) request.getAttribute("javax.servlet.include.request_uri");
 			String wicketQueryString = (String) request.getAttribute("javax.servlet.include.query_string");
 			queryString = mergeQueryString(request.getParameterMap(), request.getQueryString(), wicketQueryString);
+			// Arena 4.0
+			fixContextPath();
+			fixParameterMap(request);
+
 		}
 		// else if request is a forward
 		else if ((contextPath = (String) request.getAttribute("javax.servlet.forward.context_path")) != null) {
 			requestURI = (String) request.getAttribute("javax.servlet.forward.request_uri");
 			String wicketQueryString = (String) request.getAttribute("javax.servlet.forward.query_string");
 			queryString = mergeQueryString(request.getParameterMap(), request.getQueryString(), wicketQueryString);
+			// Arena 4.0
+			fixContextPath();
+			fixParameterMap(request);
 		}
 		// else it is a normal request
 		else {
@@ -167,7 +178,30 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper {
 			queryString = request.getQueryString();
 		}
 	}
-	
+
+	// Arena 4.0
+	private void fixContextPath() {
+		if (contextPath != null && requestURI != null) {
+			int idx = requestURI.indexOf(contextPath);
+			if (idx > 0) {
+				contextPath = requestURI.substring(0, idx) + contextPath;
+			}
+		}
+	}
+
+	private void fixParameterMap(final HttpServletRequest request) {
+		Map parameterMap = new HashMap();
+		HttpServletRequest currentRequest = request;
+		while (currentRequest instanceof HttpServletRequestWrapper && ((HttpServletRequestWrapper) currentRequest).getRequest() != null) {
+			currentRequest = (HttpServletRequest) ((HttpServletRequestWrapper) currentRequest).getRequest();
+			parameterMap.putAll(currentRequest.getParameterMap());
+		}
+		parameterMap.putAll(super.getParameterMap());
+		this.parameterMap = Collections.unmodifiableMap(parameterMap);
+	}
+
+
+
 	private String mergeQueryString(Map<String, String[]> requestParameterMap, String requestQueryString, String wicketQueryString) {
 		// Many Javascript based components append parameters directly to the URL, so they are not part of the '_wu' or 'resourceId' parameter.
 		// Wicket can access these parameters, but they are not present in the querystring, so Wicket identifies them as POST parameters.
