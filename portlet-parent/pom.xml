@@ -9,6 +9,7 @@
 		<version>7.10.0</version>
 	</parent>
 	<artifactId>wicketstuff-portlet-parent</artifactId>
+	<version>7.10.1-SNAPSHOT</version>
 	<name>Portlet Parent</name>
 
 	<packaging>pom</packaging>
