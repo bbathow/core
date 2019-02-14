@@ -181,6 +181,7 @@ public class PortletServletRequestWrapper extends HttpServletRequestWrapper {
 			contextPath = request.getContextPath();
 			requestURI = request.getRequestURI();
 			queryString = request.getQueryString();
+			parameterMap = super.getParameterMap();
 		}
 	}
 
