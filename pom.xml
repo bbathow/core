@@ -6,7 +6,7 @@
 	<groupId>org.wicketstuff</groupId>
 	<artifactId>wicketstuff-core</artifactId>
 	<packaging>pom</packaging>
-	<version>7.0-SNAPSHOT</version>
+	<version>7.12.0</version>
 	<name>WicketStuff Core Parent</name>
 	<description>
 		WicketStuff Core Parent is the parent project for all of the core WicketStuff projects.  It tries
@@ -73,6 +73,20 @@
 	</distributionManagement>
 
 	<profiles>
+        <profile>
+			<id>dpp-maven</id>
+			<distributionManagement>
+				<repository>
+					<id>releases</id>
+					<url>https://dpdhl-build.senacor.com/nexus/content/repositories/releases/</url>
+				</repository>
+				<snapshotRepository>
+					<id>snapshots</id>
+					<url>https://dpdhl-build.senacor.com/nexus/content/repositories/snapshots/</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+
 		<profile>
 			<id>oss.sonatype.org-staged-release</id>
 			<!-- This is the profile to use for releasing into the staged release
@@ -237,13 +251,13 @@
 
 	<scm>
 		<url>https://github.com/wicketstuff/core</url>
-		<connection>scm:git:ssh://git@github.com:wicketstuff/core.git</connection>
+		<connection>scm:git:ssh://git@github.com:bbathow/core.git</connection>
 	</scm>
 
 	<!-- mocleiri: for distribution in to central repository sections in the main pom are not allowed -->
 
 	<properties>
-		<wicket.version>7.11.0-SNAPSHOT</wicket.version>
+		<wicket.version>7.12.0</wicket.version>
 
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
